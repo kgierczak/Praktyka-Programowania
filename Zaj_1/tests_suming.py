@@ -1,5 +1,5 @@
 import unittest
-from Zaj_1.main import Add
+from Zaj_1.zaj_1 import Add
 
 class TestAdd(unittest.TestCase):
 
