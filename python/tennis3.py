@@ -1,27 +1,46 @@
 class TennisGame3:
-    def __init__(self, player1_name, player2_name):
-        self.p1_n = player1_name
-        self.p2_n = player2_name
-        self.p1 = 0
-        self.p2 = 0
+    def __init__(self, player1_name: str, player2_name: str):
+        self.player1_name = player1_name
+        self.player2_name = player2_name
+        # Zmiana nazw pól punktów dla lepszej czytelności
+        self.p1_points = 0
+        self.p2_points = 0
 
-    def won_point(self, n):
-        if n == "player1":
-            self.p1 += 1
-        else:
-            self.p2 += 1
+    def won_point(self, player_name: str):
+        if player_name == "player1":
+            self.p1_points += 1
+        elif player_name == "player2":
+            self.p2_points += 1
 
-    def score(self):
-        if (self.p1 < 4 and self.p2 < 4) and (self.p1 + self.p2 < 6):
-            p = ["Love", "Fifteen", "Thirty", "Forty"]
-            s = p[self.p1]
-            return s + "-All" if (self.p1 == self.p2) else s + "-" + p[self.p2]
-        else:
-            if self.p1 == self.p2:
-                return "Deuce"
-            s = self.p1_n if self.p1 > self.p2 else self.p2_n
-            return (
-                "Advantage " + s
-                if ((self.p1 - self.p2) * (self.p1 - self.p2) == 1)
-                else "Win for " + s
-            )
+    def score(self) -> str:
+        # Standardowa punktacja
+        if self._is_standard_score():
+            return self._get_standard_score_label()
+
+        # Stan równowagi
+        if self.p1_points == self.p2_points:
+            return "Deuce"
+
+        # Przewaga lub Wygrana
+        return self._get_end_game_status()
+
+    # Sprawdza, czy gra jest na etapie standardowych punktów
+    def _is_standard_score(self) -> bool:
+        return self.p1_points < 4 and self.p2_points < 4 and (self.p1_points + self.p2_points < 6)
+
+    def _get_standard_score_label(self) -> str:
+        score_names = ["Love", "Fifteen", "Thirty", "Forty"]
+        p1_score = score_names[self.p1_points]
+
+        if self.p1_points == self.p2_points:
+            return f"{p1_score}-All"
+        return f"{p1_score}-{score_names[self.p2_points]}"
+
+    # Logika dla Przewagi i Wygranej
+    def _get_end_game_status(self) -> str:
+        leader = self.player1_name if self.p1_points > self.p2_points else self.player2_name
+        point_diff = abs(self.p1_points - self.p2_points)
+
+        if point_diff == 1:
+            return f"Advantage {leader}"
+        return f"Win for {leader}"
